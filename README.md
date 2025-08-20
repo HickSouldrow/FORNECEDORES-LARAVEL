@@ -84,11 +84,11 @@ Edite os arquivos de migration criados:
 public function up()
 {
     Schema::create('cadastro', function (Blueprint $table) {
-        $table->id();
+        $table->id(); // ID chave primária
         $table->string('nome');
         $table->string('endereco');
         $table->string('telefone');
-        $table->string('cnpj');
+        $table->string('cnpj')->unique();
         $table->timestamps();
     });
 }
@@ -104,10 +104,15 @@ public function up()
         $table->id();
         $table->integer('quantidade');
         $table->decimal('valor_unitario', 10, 2);
-        $table->foreignId('cadastro_id')->constrained('cadastro');
+        
+        // FK para cadastro
+        $table->unsignedBigInteger('cadastro_id');
+        $table->foreign('cadastro_id')->references('id')->on('cadastro')->onDelete('cascade');
+
         $table->timestamps();
     });
 }
+
 ```
 <img width="779" height="510" alt="image" src="https://github.com/user-attachments/assets/1c38e63f-f7dc-408c-924f-3dd6a4ce8d66" />
 
@@ -117,7 +122,7 @@ public function up()
 public function up()
 {
     Schema::table('cadastro', function (Blueprint $table) {
-        $table->string('razao_social')->after('nome');
+        $table->string('razao_social')->after('cnpj');
         $table->string('nome_fantasia')->after('razao_social');
     });
 }
